@@ -11,7 +11,6 @@ import java.sql.*;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 public class DatabaseManager implements Resource {
 
@@ -47,10 +46,12 @@ public class DatabaseManager implements Resource {
         LOGGER.info("Executing beforeCheckpoint");
         if (connection != null) {
             try {
+                save(new AppLog("Closing DB connection before checkpoint"));
+                Thread.sleep(500);
                 connection.close();
                 connection = null;
-            } catch (SQLException e) {
-                LOGGER.error("SQL error while closing the connection: {}", e.getMessage());
+            } catch (InterruptedException | SQLException e) {
+                LOGGER.error("Error while closing the connection: {}", e.getMessage());
             }
         }
     }
@@ -59,6 +60,7 @@ public class DatabaseManager implements Resource {
     public void afterRestore(Context<? extends Resource> context) {
         LOGGER.info("Executing afterRestore");
         initConnection();
+        save(new AppLog("Reopened DB connection after restore"));
     }
 
     public Collection<AppLog> getAll() {
@@ -80,26 +82,6 @@ public class DatabaseManager implements Resource {
             LOGGER.error("Error while reading from database: {}", e.getMessage());
         }
         return all;
-    }
-
-    public Optional<AppLog> get(int id) {
-        String sql = "SELECT * FROM app_log WHERE id = " + id;
-
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            if (resultSet.next()) {
-                var appLog = new AppLog(resultSet.getInt("id"),
-                        resultSet.getTimestamp("timestamp").toInstant().atZone(ZoneId.of("UTC")),
-                        resultSet.getInt("duration"),
-                        resultSet.getString("description"));
-                LOGGER.debug("Found {} in database", appLog.getId());
-                return Optional.of(appLog);
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error while reading from database: {}", e.getMessage());
-        }
-        return Optional.empty();
     }
 
     public void save(AppLog appLog) {
