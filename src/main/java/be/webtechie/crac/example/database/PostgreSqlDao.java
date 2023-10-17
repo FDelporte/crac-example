@@ -1,5 +1,6 @@
 package be.webtechie.crac.example.database;
 
+import be.webtechie.crac.example.manager.DatabaseConnectionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,8 +15,8 @@ public class PostgreSqlDao implements Dao<AppLog, Integer> {
     private static final Logger LOGGER = LogManager.getLogger(PostgreSqlDao.class);
     private final Connection connection;
 
-    public PostgreSqlDao() {
-        this.connection = JdbcConnection.getConnection();
+    public PostgreSqlDao(DatabaseConnectionManager connection) {
+        this.connection = DatabaseConnectionManager.getConnection();
     }
 
     public Collection<AppLog> getAll() {
@@ -30,7 +31,7 @@ public class PostgreSqlDao implements Dao<AppLog, Integer> {
                         resultSet.getInt("duration"),
                         resultSet.getString("description"));
                 all.add(appLog);
-                LOGGER.info("Found {} in database", appLog);
+                LOGGER.debug("Found {} in database", appLog);
             }
 
         } catch (SQLException e) {
@@ -50,9 +51,7 @@ public class PostgreSqlDao implements Dao<AppLog, Integer> {
                         resultSet.getTimestamp("timestamp").toInstant().atZone(ZoneId.of("UTC")),
                         resultSet.getInt("duration"),
                         resultSet.getString("description"));
-
-                LOGGER.info("Found {} in database", appLog.getId());
-
+                LOGGER.debug("Found {} in database", appLog.getId());
                 return Optional.of(appLog);
             }
         } catch (SQLException e) {
@@ -89,7 +88,7 @@ public class PostgreSqlDao implements Dao<AppLog, Integer> {
                 }
             }
 
-            LOGGER.info("AppLog saved? {}", (numberOfInsertedRows > 0));
+            LOGGER.debug("AppLog saved? {}", (numberOfInsertedRows > 0));
         } catch (SQLException e) {
             LOGGER.error("Error while saving AppLog to database: {}", e.getMessage());
         }

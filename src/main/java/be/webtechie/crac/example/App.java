@@ -4,6 +4,7 @@ import be.webtechie.crac.example.database.AppLog;
 import be.webtechie.crac.example.database.Dao;
 import be.webtechie.crac.example.database.PostgreSqlDao;
 import be.webtechie.crac.example.manager.CsvManager;
+import be.webtechie.crac.example.manager.DatabaseConnectionManager;
 import be.webtechie.crac.example.manager.ServerManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,16 +20,19 @@ public class App extends AbstractHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(App.class);
 
-    private static Dao<AppLog, Integer> appLogDao;
     private static CsvManager csvManager;
-    private static ServerManager serverManager;
+    private static Dao<AppLog, Integer> appLogDao;
 
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting application from main");
-        appLogDao = new PostgreSqlDao();
+        // Init database and DAO
+        DatabaseConnectionManager databaseConnectionManager = new DatabaseConnectionManager();
+        appLogDao = new PostgreSqlDao(databaseConnectionManager);
         appLogDao.save(new AppLog("Started from main"));
+        // Init CSV
         csvManager = new CsvManager(appLogDao);
-        serverManager = new ServerManager(8080, new App());
+        // Init Jetty server
+        ServerManager serverManager = new ServerManager(8080, new App());
         serverManager.getServer().join();
     }
 

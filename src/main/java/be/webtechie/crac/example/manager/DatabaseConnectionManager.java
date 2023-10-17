@@ -1,4 +1,4 @@
-package be.webtechie.crac.example.database;
+package be.webtechie.crac.example.manager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,12 +10,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class JdbcConnection implements Resource {
+public class DatabaseConnectionManager implements Resource {
 
-    private static final Logger LOGGER = LogManager.getLogger(JdbcConnection.class);
+    private static final Logger LOGGER = LogManager.getLogger(DatabaseConnectionManager.class);
     private static Connection connection = null;
 
-    public JdbcConnection() {
+    public DatabaseConnectionManager() {
         Core.getGlobalContext().register(this);
     }
 
