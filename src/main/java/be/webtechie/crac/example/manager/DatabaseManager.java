@@ -61,6 +61,7 @@ public class DatabaseManager implements Resource {
     public void afterRestore(Context<? extends Resource> context) {
         LOGGER.info("Executing afterRestore");
         initConnection();
+        save(new AppLog("==================================================="));
         save(new AppLog("Reopened DB connection after restore"));
     }
 
