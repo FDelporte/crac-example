@@ -234,4 +234,59 @@ $ java -XX:CRaCRestoreFrom=cr
 2023-10-17 19:22:48.800:INFO:oejs.AbstractConnector:Attach Listener: Started ServerConnector@77a98a6a{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
 ```
 
+## Snapshot Files Stored
+
+```text
+$ ls -l --human-readable cr/
+total 843M
+-rw-r--r-- 1 root crac 1.9K Oct 17 19:37 core-13816.img
+-rw-r--r-- 1 root crac  624 Oct 17 19:37 core-13817.img
+-rw-r--r-- 1 root crac  557 Oct 17 19:37 core-13818.img
+-rw-r--r-- 1 root crac  611 Oct 17 19:37 core-13819.img
+-rw-r--r-- 1 root crac  598 Oct 17 19:37 core-13820.img
+-rw-r--r-- 1 root crac  599 Oct 17 19:37 core-13821.img
+-rw-r--r-- 1 root crac  588 Oct 17 19:37 core-13822.img
+-rw-r--r-- 1 root crac  625 Oct 17 19:37 core-13823.img
+-rw-r--r-- 1 root crac  644 Oct 17 19:37 core-13824.img
+-rw-r--r-- 1 root crac  530 Oct 17 19:37 core-13825.img
+-rw-r--r-- 1 root crac  583 Oct 17 19:37 core-13826.img
+-rw-r--r-- 1 root crac  556 Oct 17 19:37 core-13827.img
+-rw-r--r-- 1 root crac  608 Oct 17 19:37 core-13828.img
+-rw-r--r-- 1 root crac  605 Oct 17 19:37 core-13829.img
+-rw-r--r-- 1 root crac  634 Oct 17 19:37 core-13830.img
+-rw-r--r-- 1 root crac  600 Oct 17 19:37 core-13831.img
+-rw-r--r-- 1 root crac  560 Oct 17 19:37 core-13832.img
+-rw-r--r-- 1 root crac  517 Oct 17 19:37 core-13833.img
+-rw-r--r-- 1 root crac  564 Oct 17 19:37 core-13837.img
+-rw-r--r-- 1 root crac  567 Oct 17 19:37 core-13838.img
+-rw-r--r-- 1 root crac  593 Oct 17 19:37 core-13844.img
+-rw-r--r-- 1 root crac  555 Oct 17 19:37 core-13845.img
+-rw-r--r-- 1 root crac  699 Oct 17 19:37 core-13846.img
+-rw-r--r-- 1 root crac  666 Oct 17 19:37 core-13847.img
+-rw-r--r-- 1 root crac  652 Oct 17 19:37 core-13848.img
+-rw-r--r-- 1 root crac  667 Oct 17 19:37 core-13849.img
+-rw-r--r-- 1 root crac  659 Oct 17 19:37 core-13850.img
+-rw-r--r-- 1 root crac  666 Oct 17 19:37 core-13851.img
+-rw-r--r-- 1 root crac  667 Oct 17 19:37 core-13852.img
+-rw-r--r-- 1 root crac  675 Oct 17 19:37 core-13853.img
+-rw-r--r-- 1 root crac  554 Oct 17 19:37 core-13911.img
+-rw-r--r-- 1 root crac  520 Oct 17 19:37 core-13913.img
+-rw-r--r-- 1 crac crac   26 Oct 17 19:37 cppath
+-rw------- 1 crac crac 349K Oct 17 19:37 dump4.log
+-rw-r--r-- 1 root crac  224 Oct 17 19:37 fdinfo-2.img
+-rw-r--r-- 1 root crac 4.2K Oct 17 19:37 files.img
+-rw-r--r-- 1 root crac   18 Oct 17 19:37 fs-13816.img
+-rw-r--r-- 1 root crac   36 Oct 17 19:37 ids-13816.img
+-rw-r--r-- 1 root crac   46 Oct 17 19:37 inventory.img
+-rw-r--r-- 1 root crac 8.1K Oct 17 19:37 mm-13816.img
+-rw-r--r-- 1 root crac 6.3K Oct 17 19:37 pagemap-13816.img
+-rw-r--r-- 1 root crac 843M Oct 17 19:37 pages-1.img
+-rw------- 1 crac crac  32K Oct 17 19:37 perfdata
+-rw-r--r-- 1 root crac  119 Oct 17 19:37 pstree.img
+-rw-r--r-- 1 root crac   12 Oct 17 19:37 seccomp.img
+-rw-r--r-- 1 root crac   57 Oct 17 19:37 stats-dump
+-rw-r--r-- 1 root crac   32 Oct 17 19:37 timens-0.img
+-rw-r--r-- 1 root crac  196 Oct 17 19:37 tty-info.img
+```
+
 
