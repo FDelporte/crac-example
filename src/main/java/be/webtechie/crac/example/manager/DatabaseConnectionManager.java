@@ -20,21 +20,21 @@ public class DatabaseConnectionManager implements Resource {
     }
 
     public static Connection getConnection() {
-        if (connection == null) {
-            String url = "jdbc:postgresql://crac.local:5432/crac";
-            String user = "cracApp";
-            String password = "crac123";
-
-            try {
+        try {
+            if (connection == null || connection.isClosed()) {
+                LOGGER.warn("Setting up database connection");
+                String url = "jdbc:postgresql://crac.local:5432/crac";
+                String user = "cracApp";
+                String password = "crac123";
                 connection = DriverManager.getConnection(url, user, password);
                 if (!connection.isClosed()) {
                     LOGGER.info("Database connection status: {}", connection.getClientInfo());
                 } else {
                     LOGGER.error("Database connection is not available");
                 }
-            } catch (SQLException e) {
-                LOGGER.error("SQL error: {}", e.getMessage());
             }
+        } catch (SQLException e) {
+            LOGGER.error("SQL error: {}", e.getMessage());
         }
 
         return connection;
@@ -46,7 +46,6 @@ public class DatabaseConnectionManager implements Resource {
         if (connection != null) {
             try {
                 connection.close();
-                connection = null;
             } catch (SQLException e) {
                 LOGGER.error("SQL error while closing the connection: {}", e.getMessage());
             }
