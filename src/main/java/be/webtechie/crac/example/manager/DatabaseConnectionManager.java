@@ -46,6 +46,7 @@ public class DatabaseConnectionManager implements Resource {
         if (connection != null) {
             try {
                 connection.close();
+                connection = null;
             } catch (SQLException e) {
                 LOGGER.error("SQL error while closing the connection: {}", e.getMessage());
             }
