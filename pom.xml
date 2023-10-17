@@ -12,32 +12,46 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <crac.version>1.4.0</crac.version>
+        <jetty.version>9.4.51.v20230217</jetty.version>
+        <junit.version>4.13.1</junit.version>
+        <log4j.version>2.20.0</log4j.version>
+        <postgresql.version>42.6.0</postgresql.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.51.v20230217</version>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.crac</groupId>
             <artifactId>crac</artifactId>
-            <version>1.4.0</version>
+            <version>${crac.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.20.0</version>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

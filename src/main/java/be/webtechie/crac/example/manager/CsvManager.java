@@ -1,5 +1,7 @@
 package be.webtechie.crac.example.manager;
 
+import be.webtechie.crac.example.database.AppLog;
+import be.webtechie.crac.example.database.Dao;
 import be.webtechie.crac.example.model.DataRecord;
 import be.webtechie.crac.example.model.DataSet;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +17,7 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class DataManager {
+public class CsvManager {
 
     public static final String[] FILES = new String[]{
             "organizations-1000.csv",
@@ -24,10 +26,12 @@ public class DataManager {
             "organizations-500000.csv",
             "organizations-1000000.csv"
     };
-    private static final Logger LOGGER = LogManager.getLogger(DataManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(CsvManager.class);
+    private static Dao<AppLog, Integer> appLogDao;
     private final List<DataSet> dataSets;
 
-    public DataManager() {
+    public CsvManager(Dao<AppLog, Integer> appLogDao) {
+        CsvManager.appLogDao = appLogDao;
         dataSets = new ArrayList<>();
     }
 
@@ -57,6 +61,7 @@ public class DataManager {
             LOGGER.error("Could not handle data from file {}", fileName);
         }
         var end = System.currentTimeMillis();
+        appLogDao.save(new AppLog("Data was loaded and converted to Java objects from " + fileName, (int) (end - start)));
         LOGGER.warn("Data from {} was loaded and converted to Java objects in {}ms", fileName, (end - start));
         return new DataSet(fileName, records);
     }
@@ -98,6 +103,7 @@ public class DataManager {
             }
         }
         var end = System.currentTimeMillis();
+        appLogDao.save(new AppLog("ZIP was unpacked from " + fileName, (int) (end - start)));
         LOGGER.warn("Data from ZIP with length {} was loaded in {}ms", rt.length(), (end - start));
         return rt;
     }
