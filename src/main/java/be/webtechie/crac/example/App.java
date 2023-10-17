@@ -25,6 +25,7 @@ public class App extends AbstractHandler {
         LOGGER.info("Starting application from main");
         // Init database and DAO
         databaseManager = new DatabaseManager();
+        databaseManager.save(new AppLog("==================================================="));
         databaseManager.save(new AppLog("Started from main"));
         // Init CSV
         csvManager = new CsvManager(databaseManager);
