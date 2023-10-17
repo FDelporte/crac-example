@@ -7,7 +7,7 @@
     <artifactId>crac-example</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>example-jetty</name>
+    <name>Example application to demonstrate CRaC with Jetty, CSV reader, PostgreSQL</name>
     <url>https://github.com/CRaC/example-jetty</url>
 
     <properties>

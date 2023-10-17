@@ -3,6 +3,7 @@ package be.webtechie.crac.example.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.crac.Context;
+import org.crac.Core;
 import org.crac.Resource;
 
 import java.sql.Connection;
@@ -13,6 +14,10 @@ public class JdbcConnection implements Resource {
 
     private static final Logger LOGGER = LogManager.getLogger(JdbcConnection.class);
     private static Connection connection = null;
+
+    public JdbcConnection() {
+        Core.getGlobalContext().register(this);
+    }
 
     public static Connection getConnection() {
         if (connection == null) {

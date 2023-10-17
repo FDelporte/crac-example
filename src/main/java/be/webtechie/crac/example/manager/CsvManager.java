@@ -50,9 +50,11 @@ public class CsvManager {
 
     private DataSet loadData(String fileName) {
         LOGGER.warn("Need to load data from {}", fileName);
+        // Get the string content from the ZIP file
+        var fileContent = getContentFromZip(fileName);
+        // Convert to list of Java objects
         var start = System.currentTimeMillis();
         List<DataRecord> records = new ArrayList<>();
-        var fileContent = getContentFromZip(fileName);
         try (Scanner scanner = new Scanner(fileContent)) {
             while (scanner.hasNextLine()) {
                 records.add(convertOrganizationData(scanner.nextLine()));
@@ -61,8 +63,8 @@ public class CsvManager {
             LOGGER.error("Could not handle data from file {}", fileName);
         }
         var end = System.currentTimeMillis();
-        appLogDao.save(new AppLog("Data was loaded and converted to Java objects from " + fileName, (int) (end - start)));
-        LOGGER.warn("Data from {} was loaded and converted to Java objects in {}ms", fileName, (end - start));
+        appLogDao.save(new AppLog("Data was converted to Java objects from " + fileName, (int) (end - start)));
+        LOGGER.warn("Data from {} was converted to Java objects in {}ms", fileName, (end - start));
         return new DataSet(fileName, records);
     }
 
