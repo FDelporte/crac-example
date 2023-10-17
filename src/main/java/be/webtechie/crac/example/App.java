@@ -40,9 +40,11 @@ public class App extends AbstractHandler {
                        HttpServletResponse response) throws IOException {
         LOGGER.debug("Handling request {}", request.getPathInfo());
         var start = System.currentTimeMillis();
+        var storeDuration = false;
         StringBuilder rt = new StringBuilder();
         if (request.getPathInfo().contains("/files/")) {
             rt.append(csvManager.getDataSet(request.getPathInfo().replace("/files/", "")).toCsv());
+            storeDuration = true;
         } else if (request.getPathInfo().equals("/logs")) {
             rt.append(databaseManager.getAll().stream()
                     .map(AppLog::toString)
@@ -63,7 +65,9 @@ public class App extends AbstractHandler {
         baseRequest.setHandled(true);
         response.getWriter().println(rt);
         var end = System.currentTimeMillis();
-        databaseManager.save(new AppLog("Handled request for " + request.getPathInfo(), (int) (end - start)));
+        if (storeDuration) {
+            databaseManager.save(new AppLog("Handled request for " + request.getPathInfo(), (int) (end - start)));
+        }
         LOGGER.info("Handled request for {} in {}ms", request.getPathInfo(), (end - start));
     }
 }
