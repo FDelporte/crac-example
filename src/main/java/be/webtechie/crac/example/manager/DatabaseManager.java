@@ -47,6 +47,7 @@ public class DatabaseManager implements Resource {
         if (connection != null) {
             try {
                 save(new AppLog("Closing DB connection before checkpoint"));
+                save(new AppLog("==================================================="));
                 Thread.sleep(500);
                 connection.close();
                 connection = null;
