@@ -1,11 +1,9 @@
 package be.webtechie.crac.example;
 
-import be.webtechie.crac.example.database.AppLog;
-import be.webtechie.crac.example.database.Dao;
-import be.webtechie.crac.example.database.PostgreSqlDao;
 import be.webtechie.crac.example.manager.CsvManager;
-import be.webtechie.crac.example.manager.DatabaseConnectionManager;
+import be.webtechie.crac.example.manager.DatabaseManager;
 import be.webtechie.crac.example.manager.ServerManager;
+import be.webtechie.crac.example.model.AppLog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
@@ -21,16 +19,15 @@ public class App extends AbstractHandler {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
 
     private static CsvManager csvManager;
-    private static Dao<AppLog, Integer> appLogDao;
+    private static DatabaseManager databaseManager;
 
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting application from main");
         // Init database and DAO
-        DatabaseConnectionManager databaseConnectionManager = new DatabaseConnectionManager();
-        appLogDao = new PostgreSqlDao(databaseConnectionManager);
-        appLogDao.save(new AppLog("Started from main"));
+        databaseManager = new DatabaseManager();
+        databaseManager.save(new AppLog("Started from main"));
         // Init CSV
-        csvManager = new CsvManager(appLogDao);
+        csvManager = new CsvManager(databaseManager);
         // Init Jetty server
         ServerManager serverManager = new ServerManager(8080, new App());
         serverManager.getServer().join();
@@ -46,7 +43,7 @@ public class App extends AbstractHandler {
         if (request.getPathInfo().contains("/files/")) {
             rt.append(csvManager.getDataSet(request.getPathInfo().replace("/files/", "")).toCsv());
         } else if (request.getPathInfo().equals("/logs")) {
-            rt.append(appLogDao.getAll().stream()
+            rt.append(databaseManager.getAll().stream()
                     .map(AppLog::toString)
                     .collect(Collectors.joining("\n")));
         } else if (request.getPathInfo().equals("/")) {
@@ -65,7 +62,7 @@ public class App extends AbstractHandler {
         baseRequest.setHandled(true);
         response.getWriter().println(rt);
         var end = System.currentTimeMillis();
-        appLogDao.save(new AppLog("Handled request for " + request.getPathInfo(), (int) (end - start)));
+        databaseManager.save(new AppLog("Handled request for " + request.getPathInfo(), (int) (end - start)));
         LOGGER.info("Handled request for {} in {}ms", request.getPathInfo(), (end - start));
     }
 }

@@ -1,8 +1,11 @@
-package be.webtechie.crac.example.database;
+package be.webtechie.crac.example.manager;
 
-import be.webtechie.crac.example.manager.DatabaseConnectionManager;
+import be.webtechie.crac.example.model.AppLog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.crac.Context;
+import org.crac.Core;
+import org.crac.Resource;
 
 import java.sql.*;
 import java.time.ZoneId;
@@ -10,13 +13,52 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-public class PostgreSqlDao implements Dao<AppLog, Integer> {
+public class DatabaseManager implements Resource {
 
-    private static final Logger LOGGER = LogManager.getLogger(PostgreSqlDao.class);
-    private final Connection connection;
+    private static final Logger LOGGER = LogManager.getLogger(DatabaseManager.class);
+    private static Connection connection = null;
 
-    public PostgreSqlDao(DatabaseConnectionManager connection) {
-        this.connection = DatabaseConnectionManager.getConnection();
+    public DatabaseManager() {
+        Core.getGlobalContext().register(this);
+        initConnection();
+    }
+
+    public void initConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                LOGGER.warn("Setting up database connection");
+                String url = "jdbc:postgresql://crac.local:5432/crac";
+                String user = "cracApp";
+                String password = "crac123";
+                connection = DriverManager.getConnection(url, user, password);
+                if (!connection.isClosed()) {
+                    LOGGER.info("Database connection status: {}", connection.getClientInfo());
+                } else {
+                    LOGGER.error("Database connection is not available");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQL error: {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void beforeCheckpoint(Context<? extends Resource> context) {
+        LOGGER.info("Executing beforeCheckpoint");
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (SQLException e) {
+                LOGGER.error("SQL error while closing the connection: {}", e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void afterRestore(Context<? extends Resource> context) {
+        LOGGER.info("Executing afterRestore");
+        initConnection();
     }
 
     public Collection<AppLog> getAll() {
@@ -60,39 +102,24 @@ public class PostgreSqlDao implements Dao<AppLog, Integer> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<Integer> save(AppLog appLog) {
+    public void save(AppLog appLog) {
         if (appLog == null) {
             LOGGER.error("AppLog to be saved can not be null");
-            return Optional.empty();
+            return;
         }
 
         String sql = "INSERT INTO "
                 + "app_log(timestamp, duration, description) "
                 + "VALUES(?, ?, ?)";
 
-        Optional<Integer> generatedId = Optional.empty();
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setTimestamp(1, Timestamp.valueOf(appLog.getTimestamp().toLocalDateTime()));
             statement.setInt(2, appLog.getDuration());
             statement.setString(3, appLog.getDescription());
-
             int numberOfInsertedRows = statement.executeUpdate();
-
-            // Retrieve the auto-generated id
-            if (numberOfInsertedRows > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        generatedId = Optional.of(resultSet.getInt(1));
-                    }
-                }
-            }
-
-            LOGGER.debug("AppLog saved? {}", (numberOfInsertedRows > 0));
+            LOGGER.debug("AppLog saved: {}", (numberOfInsertedRows > 0));
         } catch (SQLException e) {
             LOGGER.error("Error while saving AppLog to database: {}", e.getMessage());
         }
-
-        return generatedId;
     }
 }

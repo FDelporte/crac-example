@@ -1,4 +1,4 @@
-package be.webtechie.crac.example.database;
+package be.webtechie.crac.example.model;
 
 import java.time.ZonedDateTime;
 
