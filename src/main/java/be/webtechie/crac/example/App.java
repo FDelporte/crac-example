@@ -50,6 +50,11 @@ public class App extends AbstractHandler {
                     .map(AppLog::toString)
                     .collect(Collectors.joining("\n")));
         } else if (request.getPathInfo().equals("/")) {
+            rt.append("Running on:<br/>");
+            rt.append(System.getProperty("java.runtime.version")).append("<br/>");
+            rt.append(System.getProperty("java.vendor")).append("<br/>");
+            rt.append(System.getProperty("java.vendor.version")).append("<br/>");
+            rt.append("<br/><br/>");
             rt.append("Files:<br/>");
             for (String file : CsvManager.FILES) {
                 rt.append("<a href='/files/").append(file).append("' target='_blank'>").append(file).append("</a></br>");
