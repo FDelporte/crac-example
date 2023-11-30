@@ -176,8 +176,6 @@ $ cd crac-example
 
 #### First Terminal
 
-This Pi4J application needs to be executed as sudo to have the needed privileges to interact with the GPIOs.
-
 ```bash
 $ mvn package
 $ java -XX:CRaCCheckpointTo=cr -jar target/crac-example.jar
