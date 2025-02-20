@@ -22,7 +22,7 @@ public class DatabaseManager implements Resource {
         initConnection();
     }
 
-    public void initConnection() {
+    private void initConnection() {
         try {
             if (connection == null || connection.isClosed()) {
                 LOGGER.warn("Setting up database connection");
@@ -42,7 +42,7 @@ public class DatabaseManager implements Resource {
     }
 
     @Override
-    public void beforeCheckpoint(Context<? extends Resource> context) {
+    public synchronized void beforeCheckpoint(Context<? extends Resource> context) {
         LOGGER.info("Executing beforeCheckpoint");
         if (connection != null) {
             try {
@@ -58,15 +58,19 @@ public class DatabaseManager implements Resource {
     }
 
     @Override
-    public void afterRestore(Context<? extends Resource> context) {
+    public synchronized void afterRestore(Context<? extends Resource> context) {
         LOGGER.info("Executing afterRestore");
         initConnection();
         save(new AppLog("==================================================="));
         save(new AppLog("Reopened DB connection after restore"));
     }
 
-    public Collection<AppLog> getAll() {
+    public synchronized Collection<AppLog> getAll() {
         Collection<AppLog> all = new ArrayList<>();
+        if (connection == null) {
+            LOGGER.warn("Database connection not initialized yet");
+            return all;
+        }
         String sql = "SELECT * FROM app_log ORDER BY timestamp DESC";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -86,12 +90,15 @@ public class DatabaseManager implements Resource {
         return all;
     }
 
-    public void save(AppLog appLog) {
+    public synchronized void save(AppLog appLog) {
         if (appLog == null) {
             LOGGER.error("AppLog to be saved can not be null");
             return;
         }
-
+        if (connection == null) {
+            LOGGER.warn("Database connection not initialized yet");
+            return;
+        }
         String sql = "INSERT INTO "
                 + "app_log(timestamp, duration, description) "
                 + "VALUES(?, ?, ?)";

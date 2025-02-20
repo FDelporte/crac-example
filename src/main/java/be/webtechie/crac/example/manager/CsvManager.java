@@ -34,7 +34,7 @@ public class CsvManager {
         dataSets = new ArrayList<>();
     }
 
-    public DataSet getDataSet(String fileName) {
+    public synchronized DataSet getDataSet(String fileName) {
         var dataSet = dataSets.stream()
                 .filter(ds -> ds.fileName().equals(fileName))
                 .findFirst();
@@ -70,7 +70,7 @@ public class CsvManager {
     /**
      * Based on https://www.baeldung.com/java-compress-and-uncompress
      */
-    public String getContentFromZip(String fileName) {
+    private String getContentFromZip(String fileName) {
         var filePath = "/data/" + fileName + ".zip";
         String rt = "";
         LOGGER.warn("Unzipping data file {}", filePath);

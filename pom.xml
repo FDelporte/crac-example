@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <crac.version>1.4.0</crac.version>
+        <crac.version>1.5.0</crac.version>
         <jetty.version>9.4.51.v20230217</jetty.version>
         <junit.version>4.13.1</junit.version>
         <log4j.version>2.20.0</log4j.version>

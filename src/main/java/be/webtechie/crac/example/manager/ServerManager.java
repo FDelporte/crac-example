@@ -25,14 +25,14 @@ public class ServerManager implements Resource {
     }
 
     @Override
-    public void beforeCheckpoint(Context<? extends Resource> context) {
+    public synchronized void beforeCheckpoint(Context<? extends Resource> context) {
         LOGGER.info("Executing beforeCheckpoint");
         // Stop the connectors only and keep the expensive application running
         Arrays.asList(server.getConnectors()).forEach(c -> LifeCycle.stop(c));
     }
 
     @Override
-    public void afterRestore(Context<? extends Resource> context) {
+    public synchronized void afterRestore(Context<? extends Resource> context) {
         LOGGER.info("Executing afterRestore");
         Arrays.asList(server.getConnectors()).forEach(c -> LifeCycle.start(c));
     }
